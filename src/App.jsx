@@ -19,10 +19,14 @@ export default function App() {
           scrolled ? 'bg-[#6D1B3B]/90 backdrop-blur shadow' : 'bg-[#6D1B3B]'
         }`}
       >
-        <nav className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <img src="/logo.png" alt="logo" className="h-8" />
-            <span className="text-white font-medium text-sm">
+        <nav className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center relative">
+          <div className="flex items-center space-x-3">
+            <img
+              src="/logo.png"
+              alt="logo"
+              className="h-12 w-auto object-contain"
+            />
+            <span className="text-white font-medium text-base">
               Bc. Eva Codlová
             </span>
           </div>
@@ -63,41 +67,41 @@ export default function App() {
 
           {/* Hamburger menu button */}
           <button
-            className="md:hidden text-white text-2xl"
+            className="md:hidden text-white text-3xl z-50"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             ☰
           </button>
-        </nav>
 
-        {/* Mobile menu */}
-        {menuOpen && (
-          <div className="md:hidden bg-[#6D1B3B] text-white px-4 pb-4 space-y-2">
-            <a href="#home" onClick={() => setMenuOpen(false)}>
-              Úvod
-            </a>
-            <br />
-            <a href="#services" onClick={() => setMenuOpen(false)}>
-              Služby
-            </a>
-            <br />
-            <a href="#about" onClick={() => setMenuOpen(false)}>
-              O mně
-            </a>
-            <br />
-            <a href="/cenik" onClick={() => setMenuOpen(false)}>
-              Ceník
-            </a>
-            <br />
-            <a href="/ecommerce" onClick={() => setMenuOpen(false)}>
-              E-commerce
-            </a>
-            <br />
-            <a href="#contact" onClick={() => setMenuOpen(false)}>
-              Kontakt
-            </a>
-          </div>
-        )}
+          {/* Mobile menu */}
+          {menuOpen && (
+            <div className="absolute top-full right-0 left-0 bg-[#6D1B3B] text-white px-6 pb-4 space-y-2 z-40">
+              <a href="#home" onClick={() => setMenuOpen(false)}>
+                Úvod
+              </a>
+              <br />
+              <a href="#services" onClick={() => setMenuOpen(false)}>
+                Služby
+              </a>
+              <br />
+              <a href="#about" onClick={() => setMenuOpen(false)}>
+                O mně
+              </a>
+              <br />
+              <a href="/cenik" onClick={() => setMenuOpen(false)}>
+                Ceník
+              </a>
+              <br />
+              <a href="/ecommerce" onClick={() => setMenuOpen(false)}>
+                E-commerce
+              </a>
+              <br />
+              <a href="#contact" onClick={() => setMenuOpen(false)}>
+                Kontakt
+              </a>
+            </div>
+          )}
+        </nav>
       </header>
 
       {/* Hero sekce */}
