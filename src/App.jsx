@@ -130,8 +130,12 @@ export default function App() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
           >
-            <div className="w-full h-80 bg-gray-300 flex items-center justify-center">
-              <span className="text-gray-600">[Foto placeholder]</span>
+            <div className="w-full h-80">
+              <img
+                src="/eva.jpg"
+                alt="Eva Codlová"
+                className="w-full h-full object-cover rounded"
+              />
             </div>
           </motion.div>
         </div>
@@ -179,8 +183,12 @@ export default function App() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
           >
-            <div className="w-full h-64 bg-gray-300 flex items-center justify-center">
-              <span className="text-gray-600">[Foto / ilustrace]</span>
+            <div className="w-full h-64">
+              <img
+                src="/eva.jpg"
+                alt="Eva Codlová"
+                className="w-full h-full object-cover rounded"
+              />
             </div>
           </motion.div>
         </div>
