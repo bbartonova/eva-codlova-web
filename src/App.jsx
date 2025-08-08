@@ -154,8 +154,11 @@ export default function App() {
       </header>
 
       {/* Hero sekce */}
-      <section id="home" className="bg-[#F5F5F5] pt-[88px]">
-        <div className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-8 items-center">
+      <section
+        id="home"
+        className="min-h-screen flex items-center justify-center bg-[#F5F5F5] pt-24 pb-16"
+      >
+        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -164,29 +167,31 @@ export default function App() {
             <h1 className="font-playfair text-4xl mb-4 text-[#6D1B3B]">
               Vaše spolehlivá účetní partnerka
             </h1>
-            <p className="mb-6 text-gray-700">
+            <p className="mb-4 text-gray-700">
               Přehledné účetnictví, bez starostí, s lidským přístupem.
+            </p>
+            <p className="mb-6 text-gray-700">
+              K dispozici online i osobně v Českých Budějovicích. Více než 5 let
+              účetnictví v IT a e-commerce, přes 9 let praxe v oboru.
             </p>
             <a
               href="#contact"
-              onClick={(e) => handleMenuClick(e, '#contact')}
               className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
             >
               Domluvte si konzultaci
             </a>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
           >
-            <div className="w-full h-80">
-              <img
-                src="/eva.jpg"
-                alt="Eva Codlová"
-                className="w-full h-full object-cover rounded"
-              />
-            </div>
+            <img
+              src="/eva.jpg"
+              alt="Bc. Eva Codlová"
+              className="w-full h-80 object-cover rounded shadow-lg"
+            />
           </motion.div>
         </div>
       </section>
