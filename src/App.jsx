@@ -67,7 +67,7 @@ export default function App() {
 
           {/* Hamburger menu button */}
           <button
-            className="md:hidden text-white text-3xl z-50"
+            className="md:hidden text-white text-3xl z-50 mr-8"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             ☰
@@ -75,7 +75,7 @@ export default function App() {
 
           {/* Mobile menu */}
           {menuOpen && (
-            <div className="absolute top-full right-0 left-0 bg-[#6D1B3B] text-white px-6 pb-4 space-y-2 z-40">
+            <div className="absolute top-full right-0 w-[85vw] bg-[#6D1B3B] text-white px-6 pb-4 space-y-2 z-40 rounded shadow-lg">
               <a href="#home" onClick={() => setMenuOpen(false)}>
                 Úvod
               </a>
