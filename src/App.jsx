@@ -30,7 +30,7 @@ export default function App() {
     "relative uppercase tracking-wide after:content-[''] after:block after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left";
 
   return (
-    <div className="font-roboto">
+    <div className="font-roboto overflow-x-hidden">
       {/* Menu */}
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
@@ -105,13 +105,13 @@ export default function App() {
             </li>
           </ul>
           <button
-            className="md:hidden text-white text-3xl z-50 mr-8"
+            className="md:hidden text-white text-3xl z-50 mr-4"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             ☰
           </button>
           {menuOpen && (
-            <div className="absolute top-full right-0 w-[85vw] bg-[#6D1B3B] text-white px-6 py-4 space-y-4 z-40 rounded shadow-lg uppercase tracking-wide">
+            <div className="absolute top-full left-4 right-4 bg-[#6D1B3B] text-white px-6 py-4 space-y-4 z-40 rounded shadow-lg uppercase tracking-wide">
               <a
                 href="#home"
                 onClick={(e) => handleMenuClick(e, '#home')}
@@ -192,7 +192,7 @@ export default function App() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
-            className="flex items-end space-x-4"
+            className="flex items-end justify-center md:justify-start space-x-0"
           >
             {/* Ikona LinkedIn vedle fotky vlevo */}
             <a
