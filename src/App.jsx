@@ -186,7 +186,40 @@ export default function App() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
+            className="flex items-end space-x-4"
           >
+            {/* Ikona LinkedIn vedle fotky vlevo */}
+            <a
+              href="https://www.linkedin.com/in/eva-codlova"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center justify-center w-10 h-10 bg-white text-[#6D1B3B] rounded-full shadow hover:bg-gray-100 transition"
+              title="LinkedIn"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                className="w-5 h-5"
+              >
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 
+               2.239 5 5 5h14c2.761 0 5-2.239 
+               5-5v-14c0-2.761-2.239-5-5-5zm-11 
+               19h-3v-10h3v10zm-1.5-11.268c-.966 
+               0-1.75-.784-1.75-1.75s.784-1.75 
+               1.75-1.75 1.75.784 
+               1.75 1.75-.784 1.75-1.75 
+               1.75zm13.5 11.268h-3v-5.604c0-1.337-.025-3.061-1.865-3.061-1.867 
+               0-2.154 1.459-2.154 
+               2.968v5.697h-3v-10h2.881v1.367h.041c.401-.761 
+               1.379-1.563 2.837-1.563 
+               3.033 0 3.594 1.996 3.594 
+               4.59v5.606z"
+                />
+              </svg>
+            </a>
+
             <img
               src="/eva.jpg"
               alt="Bc. Eva Codlová"
@@ -229,8 +262,19 @@ export default function App() {
               O mně
             </h2>
             <p className="text-gray-700 mb-4">
-              Krátký text o Evě – vzdělání, zkušenosti, přístup k práci. Bude
-              doplněn.
+              Vyrůstala jsem v&nbsp;Českém Krumlově, kde bylo vhodné prostředí
+              pro podnikání, a proto mě od mala zajímalo počítání, peníze a
+              rozvoj businessu. Vystudovala jsem Obchodní akademii
+              (Husova&nbsp;1) a na VŠTE Podnikovou ekonomiku.
+            </p>
+            <p className="text-gray-700 mb-4">
+              Mám více než 5&nbsp;let zkušeností s&nbsp;účetnictvím projektů
+              v&nbsp;IT a e-commerce a celkově přes 9&nbsp;let praxe
+              v&nbsp;oboru.
+            </p>
+            <p className="text-gray-700">
+              Jsem k&nbsp;dispozici online, nebo se můžeme potkat v&nbsp;Českých
+              Budějovicích.
             </p>
           </motion.div>
           <motion.div
@@ -238,9 +282,11 @@ export default function App() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
           >
-            <div className="w-full h-64 bg-gray-300 flex items-center justify-center">
-              <span className="text-gray-600">[Foto / ilustrace]</span>
-            </div>
+            <img
+              src="/o-mne.jpg"
+              alt="Účetnictví a poradenství – Eva Codlová"
+              className="w-full h-64 object-cover rounded shadow-lg"
+            />
           </motion.div>
         </div>
       </section>
