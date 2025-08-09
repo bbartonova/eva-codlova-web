@@ -4,10 +4,16 @@ import { motion } from 'framer-motion';
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showToTop, setShowToTop] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 10);
+      setShowToTop(y > 300);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // inicializace po načtení
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -347,6 +353,28 @@ export default function App() {
         </a>
         , Bc. Eva Codlová. All Rights Reserved
       </footer>
+
+      {/* Šipka nahoru */}
+      {showToTop && (
+        <motion.button
+          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Zpět nahoru"
+          className="fixed bottom-5 right-5 md:bottom-8 md:right-8 bg-[#6D1B3B] text-white p-3 md:p-4 rounded-full shadow-lg hover:bg-[#8a2b52] focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-[#6D1B3B] transition z-50"
+        >
+          {/* Šipka nahoru (SVG) */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            className="w-5 h-5 md:w-6 md:h-6 fill-current"
+          >
+            <path d="M12 5l7 7-1.41 1.41L13 9.83V20h-2V9.83l-4.59 4.58L5 12z" />
+          </svg>
+        </motion.button>
+      )}
     </div>
   );
 }
