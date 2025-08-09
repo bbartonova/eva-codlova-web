@@ -178,7 +178,7 @@ export default function App() {
               href="#contact"
               className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
             >
-              Domluvte si konzultaci
+              Domluvte si konzultaci zdarma
             </a>
           </motion.div>
 
@@ -261,22 +261,34 @@ export default function App() {
             <h2 className="font-playfair text-3xl mb-4 text-[#6D1B3B]">
               O mně
             </h2>
+
             <p className="text-gray-700 mb-4">
-              Vyrůstala jsem v&nbsp;Českém Krumlově, kde bylo vhodné prostředí
-              pro podnikání, a proto mě od mala zajímalo počítání, peníze a
-              rozvoj businessu. Vystudovala jsem Obchodní akademii
-              (Husova&nbsp;1) a na VŠTE Podnikovou ekonomiku.
+              Vyrůstala jsem v Českém Krumlově, kde bylo vhodné prostředí pro
+              podnikání, a už od dětství mě bavilo počítání i peníze.
             </p>
+
             <p className="text-gray-700 mb-4">
-              Mám více než 5&nbsp;let zkušeností s&nbsp;účetnictvím projektů
-              v&nbsp;IT a e-commerce a celkově přes 9&nbsp;let praxe
-              v&nbsp;oboru.
+              Vystudovala jsem Obchodní akademii (Husova 1) a na VŠTE Podnikovou
+              ekonomiku. Mám více než 9 let praxe v účetnictví, od malých firem
+              až po středně velké společnosti, včetně projektů v oblasti
+              e-commerce a IT.
             </p>
-            <p className="text-gray-700">
-              Jsem k&nbsp;dispozici online, nebo se můžeme potkat v&nbsp;Českých
+
+            <p className="text-gray-700 mb-6">
+              Jsem k dispozici online, nebo se můžeme potkat v Českých
               Budějovicích.
             </p>
+
+            <a
+              href="/eva-codlova-cv.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
+            >
+              Stáhnout CV
+            </a>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -284,7 +296,7 @@ export default function App() {
           >
             <img
               src="/o-mne.jpg"
-              alt="Účetnictví a poradenství – Eva Codlová"
+              alt="Pracovní stůl"
               className="w-full h-64 object-cover rounded shadow-lg"
             />
           </motion.div>
