@@ -75,7 +75,11 @@ export default function Home() {
         }`}
       >
         <nav className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center relative border-b border-white/20">
-          <div className="flex items-center space-x-3">
+          <a
+            href="/?to=home"
+            aria-label="Úvod"
+            className="flex items-center space-x-3"
+          >
             <img
               src="/logo.png"
               alt="logo"
@@ -84,7 +88,7 @@ export default function Home() {
             <span className="text-white font-medium text-base">
               Bc. Eva Codlová
             </span>
-          </div>
+          </a>
 
           {/* Desktop menu */}
           <ul className="hidden md:flex space-x-6 text-white font-medium">
