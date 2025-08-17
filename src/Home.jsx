@@ -18,17 +18,16 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Autoscroll podle hashe:
-  // - nově:  /#services, /#about, /#contact, /#home
-  // - zpětně kompatibilní: /#/?to=services|about|contact|home
+  // Autoscroll podle hashe: /#services, /#about, /#contact, /#home
+  // + zpětně kompatibilní: /#/?to=services|about|contact|home
   useEffect(() => {
     const scrollFromHash = () => {
-      const { hash } = window.location; // např. "#services" nebo "#/?to=services"
+      const { hash } = window.location; // "#services" nebo "#/?to=services"
       if (!hash) return;
 
-      // 1) nová forma: "#services"
+      // nová forma: "#services"
       if (hash && !hash.includes('?')) {
-        const section = hash.replace('#', '').trim(); // "services"
+        const section = hash.replace('#', '').trim();
         if (!section) return;
         setTimeout(() => {
           const el = document.getElementById(section);
@@ -37,11 +36,11 @@ export default function Home() {
         return;
       }
 
-      // 2) stará forma s query: "#/?to=services"
+      // stará forma: "#/?to=services"
       const qs = hash.includes('?') ? hash.split('?')[1] : '';
       if (!qs) return;
       const params = new URLSearchParams(qs);
-      const to = params.get('to'); // "services" | "about" | "contact" | "home"
+      const to = params.get('to');
       if (!to) return;
       setTimeout(() => {
         const el = document.getElementById(to);
@@ -49,7 +48,7 @@ export default function Home() {
       }, 120);
     };
 
-    scrollFromHash(); // při načtení Home
+    scrollFromHash();
     window.addEventListener('hashchange', scrollFromHash);
     return () => window.removeEventListener('hashchange', scrollFromHash);
   }, []);
@@ -180,7 +179,6 @@ export default function Home() {
               >
                 O MNĚ
               </a>
-
               <a
                 href="/cenik"
                 onClick={() => setMenuOpen(false)}
@@ -202,7 +200,6 @@ export default function Home() {
               >
                 DOUČOVÁNÍ ÚČETNICTVÍ
               </a>
-
               <a
                 href="/#contact"
                 onClick={() => setMenuOpen(false)}
@@ -294,16 +291,158 @@ export default function Home() {
             Služby
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {['Účetnictví', 'Daňová evidence', 'Mzdy'].map((service, i) => (
-              <div
-                key={i}
-                className="border p-6 rounded shadow hover:shadow-lg transition"
-              >
-                <div className="text-4xl mb-4">📊</div>
-                <h3 className="font-playfair text-xl mb-2">{service}</h3>
-                <p className="text-gray-600">Popis služby – bude doplněn.</p>
-              </div>
-            ))}
+            {/* Účetnictví */}
+            <div className="border p-6 rounded shadow hover:shadow-lg transition">
+              <div className="text-4xl mb-4">📑</div>
+              <h3 className="font-playfair text-xl mb-2">Účetnictví</h3>
+              <p className="text-gray-600">
+                Kompletní vedení účetnictví a srozumitelné měsíční reporty.
+                <br />
+                <a
+                  href="#ucetnictvi-detail"
+                  className="text-[#6D1B3B] underline hover:text-[#8a2b52]"
+                >
+                  Klikněte pro více informací níže.
+                </a>
+              </p>
+            </div>
+
+            {/* Mzdy */}
+            <div className="border p-6 rounded shadow hover:shadow-lg transition">
+              <div className="text-4xl mb-4">💼</div>
+              <h3 className="font-playfair text-xl mb-2">Mzdy</h3>
+              <p className="text-gray-600">
+                Mzdy a personalistika od 240 Kč měsíčně za jednoho zaměstnance…
+                <br />
+                <a
+                  href="#mzdy-detail"
+                  className="text-[#6D1B3B] underline hover:text-[#8a2b52]"
+                >
+                  Klikněte pro více informací níže.
+                </a>
+              </p>
+            </div>
+
+            {/* Tvorba e-shopu */}
+            <div className="border p-6 rounded shadow hover:shadow-lg transition">
+              <div className="text-4xl mb-4">🛒</div>
+              <h3 className="font-playfair text-xl mb-2">Tvorba e-shopu</h3>
+              <p className="text-gray-600">
+                Mohu pomoci s vedením účetnictví a můj tým s tvorbou e-shopu.
+                <br />
+                <a
+                  href="/ecommerce"
+                  className="text-[#6D1B3B] underline hover:text-[#8a2b52]"
+                >
+                  Bližší popis služeb ZDE.
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Detailní informace o účetnictví */}
+      <section
+        id="ucetnictvi-detail"
+        className="py-16 bg-white scroll-mt-24 md:scroll-mt-28 border-t border-gray-200"
+      >
+        <div className="max-w-4xl mx-auto px-4">
+          <h3 className="font-playfair text-2xl mb-6 text-[#6D1B3B] text-center">
+            Účetnictví – co pro vás zajistíme
+          </h3>
+
+          <ul className="text-gray-700 list-disc list-inside space-y-2 text-left">
+            <li>
+              Kompletní vedení podvojného účetnictví (s.r.o., spolky, OSVČ s
+              účetnictvím).
+            </li>
+            <li>
+              Evidence a párování přijatých/vydaných faktur, bankovních výpisů a
+              pokladny.
+            </li>
+            <li>
+              DPH měsíčně/kvartálně včetně kontrolního a souhrnného hlášení.
+            </li>
+            <li>
+              Měsíční a roční uzávěrky, inventarizace, účetní závěrka a podklady
+              pro audit.
+            </li>
+            <li>
+              Přehledné reporty (výsledovka, rozvaha, cash-flow, marže) se
+              srozumitelným komentářem.
+            </li>
+            <li>
+              Zastupování a komunikace s FÚ/ČSSZ/ZP přes datovou schránku.
+            </li>
+            <li>
+              E-commerce specializace: exporty z e-shopů, párování plateb
+              (GoPay/Comgate aj.), práce se skladem.
+            </li>
+            <li>
+              Automatický sběr dokladů (sdílené složky/e-mail), kontrola dokladů
+              a připomínky termínů.
+            </li>
+          </ul>
+          {/* CTA */}
+          <div className="mt-8 flex justify-center">
+            <a
+              href="/#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById('contact');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                  window.location.href = '/#contact';
+                }
+              }}
+              className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
+            >
+              To chci
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Detailní informace o mzdách */}
+      <section
+        id="mzdy-detail"
+        className="py-16 bg-white scroll-mt-24 md:scroll-mt-28 border-t border-gray-200"
+      >
+        <div className="max-w-4xl mx-auto px-4">
+          <h3 className="font-playfair text-2xl mb-6 text-[#6D1B3B] text-center">
+            Mzdy a personalistika
+          </h3>
+          <ul className="text-gray-700 list-disc list-inside space-y-2 text-left">
+            <li>zasíláme elektronické výplatnice</li>
+            <li>poskytujeme vzorové smlouvy</li>
+            <li>mzdy zpracujeme do 2 dnů</li>
+            <li>zpracujeme přihlášky a odhlášky zaměstnanců na úřadech</li>
+            <li>
+              vystavení mezd, odeslání přehledů pro SSZ a ZP, ELDP datovou
+              schránkou
+            </li>
+            <li>
+              zpracujeme i roční vyúčtování daně za zaměstnanců (pokud o to
+              požádají)
+            </li>
+          </ul>
+          <div className="mt-8 flex justify-center">
+            <a
+              href="/#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById('contact');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                  window.location.href = '/#contact';
+                }
+              }}
+              className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
+            >
+              To chci
+            </a>
           </div>
         </div>
       </section>
