@@ -368,7 +368,7 @@ export default function Home() {
               pro audit.
             </li>
             <li>
-              Přehledné reporty (výsledovka, rozvaha, cash-flow, marže) se
+              Přehledné reporty (výsledovka, rozvaha, cash flow, marže) se
               srozumitelným komentářem.
             </li>
             <li>
