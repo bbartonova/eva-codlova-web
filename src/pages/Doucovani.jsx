@@ -206,6 +206,7 @@ export default function Doucovani() {
                   výkazy a ukazatele (rozvaha, výkaz zisku a ztráty, cash flow)
                 </li>
                 <li>daňový systém a principy zdanění</li>
+                <li>vyplnit daňové přiznání pro zkoušku</li>
               </ul>
             </div>
             <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
