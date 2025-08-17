@@ -6,6 +6,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showToTop, setShowToTop] = useState(false);
 
+  // Sticky menu + zobrazení šipky nahoru
   useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY;
@@ -15,6 +16,35 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // inicializace po načtení
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll na sekci dle parametru v HASHi: /#/?to=contact|services|about|home
+  useEffect(() => {
+    const scrollFromHashQuery = () => {
+      const hash = window.location.hash || ''; // např. "#/?to=contact"
+      const qs = hash.includes('?') ? hash.split('?')[1] : '';
+      if (!qs) return;
+
+      const params = new URLSearchParams(qs);
+      const to = params.get('to'); // "contact" | "services" | "about" | "home"
+      if (!to) return;
+
+      setTimeout(() => {
+        const el = document.getElementById(to);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // vyčistit query (ponecháme jen část před "?")
+        const base = hash.split('?')[0]; // "#/" nebo "#"
+        window.history.replaceState(
+          {},
+          '',
+          `${window.location.pathname}${window.location.search}#${base}`,
+        );
+      }, 150);
+    };
+
+    scrollFromHashQuery(); // při načtení Home
+    window.addEventListener('hashchange', scrollFromHashQuery);
+    return () => window.removeEventListener('hashchange', scrollFromHashQuery);
   }, []);
 
   const handleMenuClick = (e, targetId) => {
@@ -197,7 +227,17 @@ export default function Home() {
               účetnictví v IT a e-commerce, přes 9 let praxe v oboru.
             </p>
             <a
-              href="#contact"
+              href="/#/?to=contact"
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById('contact');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                  // fallback když nejsme na Home nebo DOM ještě není připraven
+                  window.location.href = '/#/?to=contact';
+                }
+              }}
               className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
             >
               Domluvte si konzultaci zdarma
@@ -208,37 +248,25 @@ export default function Home() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
-            className="flex items-end justify-center md:justify-start space-x-0"
+            className="flex items-end justify-center md:justify-start gap-3 md:gap-4"
           >
-            {/* Ikona LinkedIn vedle fotky vlevo */}
+            {/* Ikona LinkedIn – vlevo od fotky, jen na desktopu */}
             <a
               href="https://www.linkedin.com/in/eva-codlova"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:flex items-center justify-center w-10 h-10 bg-white text-[#6D1B3B] rounded-full shadow hover:bg-gray-100 transition"
+              aria-label="LinkedIn"
+              className="hidden md:flex items-center justify-center w-11 h-11 rounded-full bg-white text-[#6D1B3B] shadow-lg ring-1 ring-black/10 hover:ring-white/50 hover:scale-105 transition transform duration-200"
               title="LinkedIn"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 24 24"
+                viewBox="0 0 448 512"
                 className="w-5 h-5"
+                fill="currentColor"
               >
-                <path
-                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 
-               2.239 5 5 5h14c2.761 0 5-2.239 
-               5-5v-14c0-2.761-2.239-5-5-5zm-11 
-               19h-3v-10h3v10zm-1.5-11.268c-.966 
-               0-1.75-.784-1.75-1.75s.784-1.75 
-               1.75-1.75 1.75.784 
-               1.75 1.75-.784 1.75-1.75 
-               1.75zm13.5 11.268h-3v-5.604c0-1.337-.025-3.061-1.865-3.061-1.867 
-               0-2.154 1.459-2.154 
-               2.968v5.697h-3v-10h2.881v1.367h.041c.401-.761 
-               1.379-1.563 2.837-1.563 
-               3.033 0 3.594 1.996 3.594 
-               4.59v5.606z"
-                />
+                {/* Oficiální LinkedIn „in“ logo (Font Awesome tvar) */}
+                <path d="M100.28 448H7.4V148.9h92.88zm-46.44-340C24.28 108 0 83.7 0 53.64A53.64 53.64 0 0 1 53.64 0C83.7 0 108 24.28 108 53.64c0 30.06-24.3 54.36-54.16 54.36zM447.9 448h-92.58V302.4c0-34.7-.7-79.2-48.26-79.2-48.3 0-55.7 37.7-55.7 76.6V448h-92.6V148.9h88.94v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z" />
               </svg>
             </a>
 
@@ -381,7 +409,6 @@ export default function Home() {
           aria-label="Zpět nahoru"
           className="fixed bottom-5 right-5 md:bottom-8 md:right-8 bg-[#6D1B3B] text-white p-3 md:p-4 rounded-full shadow-lg hover:bg-[#8a2b52] focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-[#6D1B3B] transition z-50"
         >
-          {/* Šipka nahoru (SVG) */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
