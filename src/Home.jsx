@@ -6,7 +6,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showToTop, setShowToTop] = useState(false);
 
-  // Sticky menu + zobrazení šipky nahoru
+  // Sticky menu + šipka nahoru
   useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY;
@@ -14,37 +14,44 @@ export default function Home() {
       setShowToTop(y > 300);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // inicializace po načtení
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Scroll na sekci dle parametru v HASHi: /#/?to=contact|services|about|home
+  // Autoscroll podle hashe:
+  // - nově:  /#services, /#about, /#contact, /#home
+  // - zpětně kompatibilní: /#/?to=services|about|contact|home
   useEffect(() => {
-    const scrollFromHashQuery = () => {
-      const hash = window.location.hash || ''; // např. "#/?to=contact"
+    const scrollFromHash = () => {
+      const { hash } = window.location; // např. "#services" nebo "#/?to=services"
+      if (!hash) return;
+
+      // 1) nová forma: "#services"
+      if (hash && !hash.includes('?')) {
+        const section = hash.replace('#', '').trim(); // "services"
+        if (!section) return;
+        setTimeout(() => {
+          const el = document.getElementById(section);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+        return;
+      }
+
+      // 2) stará forma s query: "#/?to=services"
       const qs = hash.includes('?') ? hash.split('?')[1] : '';
       if (!qs) return;
-
       const params = new URLSearchParams(qs);
-      const to = params.get('to'); // "contact" | "services" | "about" | "home"
+      const to = params.get('to'); // "services" | "about" | "contact" | "home"
       if (!to) return;
-
       setTimeout(() => {
         const el = document.getElementById(to);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // vyčistit query (ponecháme jen část před "?")
-        const base = hash.split('?')[0]; // "#/" nebo "#"
-        window.history.replaceState(
-          {},
-          '',
-          `${window.location.pathname}${window.location.search}#${base}`,
-        );
-      }, 150);
+      }, 120);
     };
 
-    scrollFromHashQuery(); // při načtení Home
-    window.addEventListener('hashchange', scrollFromHashQuery);
-    return () => window.removeEventListener('hashchange', scrollFromHashQuery);
+    scrollFromHash(); // při načtení Home
+    window.addEventListener('hashchange', scrollFromHash);
+    return () => window.removeEventListener('hashchange', scrollFromHash);
   }, []);
 
   const handleMenuClick = (e, targetId) => {
@@ -83,7 +90,7 @@ export default function Home() {
           <ul className="hidden md:flex space-x-6 text-white font-medium">
             <li>
               <a
-                href="#home"
+                href="/#home"
                 onClick={(e) => handleMenuClick(e, '#home')}
                 className={menuLinkClass}
               >
@@ -92,7 +99,7 @@ export default function Home() {
             </li>
             <li>
               <a
-                href="#services"
+                href="/#services"
                 onClick={(e) => handleMenuClick(e, '#services')}
                 className={menuLinkClass}
               >
@@ -101,7 +108,7 @@ export default function Home() {
             </li>
             <li>
               <a
-                href="#about"
+                href="/#about"
                 onClick={(e) => handleMenuClick(e, '#about')}
                 className={menuLinkClass}
               >
@@ -109,26 +116,26 @@ export default function Home() {
               </a>
             </li>
 
-            {/* Samostatné stránky přes hash */}
+            {/* samostatné stránky */}
             <li>
-              <a href="/#/cenik" className={menuLinkClass}>
+              <a href="/cenik" className={menuLinkClass}>
                 CENÍK
               </a>
             </li>
             <li>
-              <a href="/#/ecommerce" className={menuLinkClass}>
+              <a href="/ecommerce" className={menuLinkClass}>
                 E-COMMERCE
               </a>
             </li>
             <li>
-              <a href="/#/doucovani" className={menuLinkClass}>
+              <a href="/doucovani" className={menuLinkClass}>
                 DOUČOVÁNÍ ÚČETNICTVÍ
               </a>
             </li>
 
             <li>
               <a
-                href="#contact"
+                href="/#contact"
                 onClick={(e) => handleMenuClick(e, '#contact')}
                 className={menuLinkClass}
               >
@@ -149,44 +156,43 @@ export default function Home() {
           {menuOpen && (
             <div className="absolute top-full left-4 right-4 bg-[#6D1B3B] text-white px-6 py-4 space-y-4 z-40 rounded shadow-lg uppercase tracking-wide">
               <a
-                href="#home"
-                onClick={(e) => handleMenuClick(e, '#home')}
+                href="/#home"
+                onClick={() => setMenuOpen(false)}
                 className="block"
               >
                 ÚVOD
               </a>
               <a
-                href="#services"
-                onClick={(e) => handleMenuClick(e, '#services')}
+                href="/#services"
+                onClick={() => setMenuOpen(false)}
                 className="block"
               >
                 SLUŽBY
               </a>
               <a
-                href="#about"
-                onClick={(e) => handleMenuClick(e, '#about')}
+                href="/#about"
+                onClick={() => setMenuOpen(false)}
                 className="block"
               >
                 O MNĚ
               </a>
 
-              {/* Hash odkazy + zavření menu po kliknutí */}
               <a
-                href="/#/cenik"
+                href="/cenik"
                 onClick={() => setMenuOpen(false)}
                 className="block"
               >
                 CENÍK
               </a>
               <a
-                href="/#/ecommerce"
+                href="/ecommerce"
                 onClick={() => setMenuOpen(false)}
                 className="block"
               >
                 E-COMMERCE
               </a>
               <a
-                href="/#/doucovani"
+                href="/doucovani"
                 onClick={() => setMenuOpen(false)}
                 className="block"
               >
@@ -194,8 +200,8 @@ export default function Home() {
               </a>
 
               <a
-                href="#contact"
-                onClick={(e) => handleMenuClick(e, '#contact')}
+                href="/#contact"
+                onClick={() => setMenuOpen(false)}
                 className="block"
               >
                 KONTAKT
@@ -227,15 +233,14 @@ export default function Home() {
               účetnictví v IT a e-commerce, přes 9 let praxe v oboru.
             </p>
             <a
-              href="/#/?to=contact"
+              href="/#contact"
               onClick={(e) => {
                 e.preventDefault();
                 const el = document.getElementById('contact');
                 if (el) {
                   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
-                  // fallback když nejsme na Home nebo DOM ještě není připraven
-                  window.location.href = '/#/?to=contact';
+                  window.location.href = '/#contact';
                 }
               }}
               className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
@@ -250,7 +255,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             className="flex items-end justify-center md:justify-start gap-3 md:gap-4"
           >
-            {/* Ikona LinkedIn – vlevo od fotky, jen na desktopu */}
+            {/* LinkedIn vlevo od fotky (jen desktop) */}
             <a
               href="https://www.linkedin.com/in/eva-codlova"
               target="_blank"
@@ -265,7 +270,6 @@ export default function Home() {
                 className="w-5 h-5"
                 fill="currentColor"
               >
-                {/* Oficiální LinkedIn „in“ logo (Font Awesome tvar) */}
                 <path d="M100.28 448H7.4V148.9h92.88zm-46.44-340C24.28 108 0 83.7 0 53.64A53.64 53.64 0 0 1 53.64 0C83.7 0 108 24.28 108 53.64c0 30.06-24.3 54.36-54.16 54.36zM447.9 448h-92.58V302.4c0-34.7-.7-79.2-48.26-79.2-48.3 0-55.7 37.7-55.7 76.6V448h-92.6V148.9h88.94v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z" />
               </svg>
             </a>

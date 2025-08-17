@@ -34,44 +34,46 @@ export default function Cenik() {
             </span>
           </div>
 
+          {/* Desktop menu */}
           <ul className="hidden md:flex space-x-6 text-white font-medium">
             <li>
-              <a href="/#/?to=home" className={menuLinkClass}>
+              <a href="/#home" className={menuLinkClass}>
                 ÚVOD
               </a>
             </li>
             <li>
-              <a href="/#/?to=services" className={menuLinkClass}>
+              <a href="/#services" className={menuLinkClass}>
                 SLUŽBY
               </a>
             </li>
             <li>
-              <a href="/#/?to=about" className={menuLinkClass}>
+              <a href="/#about" className={menuLinkClass}>
                 O MNĚ
               </a>
             </li>
             <li>
-              <a href="/#/cenik" className={menuLinkClass}>
+              <a href="/cenik" className={menuLinkClass}>
                 CENÍK
               </a>
             </li>
             <li>
-              <a href="/#/ecommerce" className={menuLinkClass}>
+              <a href="/ecommerce" className={menuLinkClass}>
                 E-COMMERCE
               </a>
             </li>
             <li>
-              <a href="/#/doucovani" className={menuLinkClass}>
+              <a href="/doucovani" className={menuLinkClass}>
                 DOUČOVÁNÍ ÚČETNICTVÍ
               </a>
             </li>
             <li>
-              <a href="/#/?to=contact" className={menuLinkClass}>
+              <a href="/#contact" className={menuLinkClass}>
                 KONTAKT
               </a>
             </li>
           </ul>
 
+          {/* Hamburger */}
           <button
             className="md:hidden text-white text-3xl z-50 mr-4"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -79,52 +81,53 @@ export default function Cenik() {
             ☰
           </button>
 
+          {/* Mobile menu */}
           {menuOpen && (
             <div className="absolute top-full left-4 right-4 bg-[#6D1B3B] text-white px-6 py-4 space-y-4 z-40 rounded shadow-lg uppercase tracking-wide">
               <a
-                href="/#/?to=home"
+                href="/#home"
                 className="block"
                 onClick={() => setMenuOpen(false)}
               >
                 ÚVOD
               </a>
               <a
-                href="/#/?to=services"
+                href="/#services"
                 className="block"
                 onClick={() => setMenuOpen(false)}
               >
                 SLUŽBY
               </a>
               <a
-                href="/#/?to=about"
+                href="/#about"
                 className="block"
                 onClick={() => setMenuOpen(false)}
               >
                 O MNĚ
               </a>
               <a
-                href="/#/cenik"
+                href="/cenik"
                 className="block"
                 onClick={() => setMenuOpen(false)}
               >
                 CENÍK
               </a>
               <a
-                href="/#/ecommerce"
+                href="/ecommerce"
                 className="block"
                 onClick={() => setMenuOpen(false)}
               >
                 E-COMMERCE
               </a>
               <a
-                href="/#/doucovani"
+                href="/doucovani"
                 className="block"
                 onClick={() => setMenuOpen(false)}
               >
                 DOUČOVÁNÍ ÚČETNICTVÍ
               </a>
               <a
-                href="/#/?to=contact"
+                href="/#contact"
                 className="block"
                 onClick={() => setMenuOpen(false)}
               >
@@ -154,7 +157,7 @@ export default function Cenik() {
               </p>
             </div>
             <a
-              href="/#/?to=contact"
+              href="/#contact"
               className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition shrink-0"
             >
               Domluvte si konzultaci zdarma
