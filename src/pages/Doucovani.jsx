@@ -186,7 +186,9 @@ export default function Doucovani() {
               <img
                 src="/doucovani.jpg"
                 alt="Doučování účetnictví – individuálně i online"
-                className="w-full h-80 object-cover rounded shadow-lg"
+                className="w-full h-auto max-h-[420px] object-contain md:h-80 md:object-cover rounded shadow-lg"
+                loading="lazy"
+                decoding="async"
               />
             </motion.div>
           </div>
