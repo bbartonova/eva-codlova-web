@@ -6,6 +6,14 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showToTop, setShowToTop] = useState(false);
 
+  // Stavy pro kontaktní formulář
+  const [fName, setFName] = useState('');
+  const [fEmail, setFEmail] = useState('');
+  const [fMsg, setFMsg] = useState('');
+  const [sending, setSending] = useState(false);
+  const [feedback, setFeedback] = useState(null); // {type:'ok'|'err', text:string}
+  const [submittedOk, setSubmittedOk] = useState(false);
+
   // Sticky menu + šipka nahoru
   useEffect(() => {
     const handleScroll = () => {
@@ -61,6 +69,73 @@ export default function Home() {
     }
     setMenuOpen(false);
   };
+
+  // Odeslání kontakt formuláře na /api/contact (s dev fallbackem)
+  async function handleContactSubmit(e) {
+    e.preventDefault();
+    setFeedback(null);
+
+    if (!fName.trim() || !fEmail.trim() || !fMsg.trim()) {
+      setFeedback({ type: 'err', text: 'Vyplňte prosím všechna pole.' });
+      return;
+    }
+
+    setSending(true);
+    const isDev =
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1';
+
+    try {
+      const resp = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: fName, email: fEmail, message: fMsg }),
+      });
+
+      let data = null;
+      try {
+        data = await resp.json();
+      } catch {
+        // ignore JSON parse error (např. 404/HTML)
+      }
+
+      if (resp.ok && data?.ok) {
+        setFeedback({
+          type: 'ok',
+          text: data.sent
+            ? 'Děkujeme, zpráva byla odeslána. Ozveme se co nejdříve.'
+            : 'Děkujeme, zpráva byla přijata (testovací režim). Ozveme se co nejdříve.',
+        });
+        setFName('');
+        setFEmail('');
+        setFMsg('');
+        setSubmittedOk(true);
+      } else if (isDev) {
+        // Fallback pro lokální vývoj bez API route
+        setFeedback({
+          type: 'ok',
+          text: 'Děkujeme, zpráva byla přijata (lokální test bez e-mailu). Ozveme se co nejdříve.',
+        });
+        setFName('');
+        setFEmail('');
+        setFMsg('');
+        setSubmittedOk(true);
+      } else {
+        throw new Error(data?.error || 'Chyba při odesílání.');
+      }
+    } catch (err) {
+      setFeedback({
+        type: 'err',
+        text: 'Omlouváme se, zprávu se nepodařilo odeslat.',
+      });
+    } finally {
+      setSending(false);
+      // ať je potvrzení/hláška jistě vidět
+      document
+        .getElementById('contact')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 
   const menuLinkClass =
     "relative uppercase tracking-wide after:content-[''] after:block after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left";
@@ -341,6 +416,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
       {/* Detailní informace o účetnictví */}
       <section
         id="ucetnictvi-detail"
@@ -506,28 +582,105 @@ export default function Home() {
           <h2 className="font-playfair text-3xl mb-8 text-[#6D1B3B] text-center">
             Kontakt
           </h2>
-          <form className="max-w-2xl mx-auto grid gap-4">
-            <input
-              type="text"
-              placeholder="Jméno"
-              className="border p-3 rounded w-full"
-            />
-            <input
-              type="email"
-              placeholder="E-mail"
-              className="border p-3 rounded w-full"
-            />
-            <textarea
-              placeholder="Zpráva"
-              className="border p-3 rounded w-full h-32"
-            />
-            <button
-              type="submit"
-              className="bg-[#6D1B3B] text-white px-6 py-3 rounded hover:bg-[#8a2b52] transition"
-            >
-              Odeslat
-            </button>
-          </form>
+
+          <div className="max-w-2xl mx-auto grid gap-4">
+            {/* poznámka k povinným polím */}
+            {!submittedOk && (
+              <p className="text-sm text-gray-600 -mt-2">
+                Pole označená <span className="text-red-600">*</span> jsou
+                povinná.
+              </p>
+            )}
+
+            {submittedOk ? (
+              // Potvrzení po úspěšném odeslání – místo formuláře
+              <div
+                role="status"
+                aria-live="polite"
+                className="rounded-lg border border-green-200 bg-green-50 p-5 text-green-800"
+              >
+                <h3 className="font-playfair text-xl mb-2">
+                  Děkujeme za zprávu!
+                </h3>
+                <p>Ozveme se vám co nejdříve na uvedený e-mail.</p>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmittedOk(false);
+                    setFeedback(null);
+                  }}
+                  className="mt-4 inline-flex items-center rounded bg-[#6D1B3B] px-5 py-2.5 text-white hover:bg-[#8a2b52] transition"
+                >
+                  Poslat další zprávu
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleContactSubmit} className="grid gap-4">
+                <label className="text-sm text-gray-800">
+                  Jméno <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Jméno"
+                  className="border p-3 rounded w-full"
+                  value={fName}
+                  onChange={(e) => setFName(e.target.value)}
+                  required
+                />
+
+                <label className="text-sm text-gray-800">
+                  E-mail <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="E-mail"
+                  className="border p-3 rounded w-full"
+                  value={fEmail}
+                  onChange={(e) => setFEmail(e.target.value)}
+                  required
+                />
+
+                <label className="text-sm text-gray-800">
+                  Zpráva <span className="text-red-600">*</span>
+                </label>
+                <textarea
+                  name="message"
+                  placeholder="Zpráva"
+                  className="border p-3 rounded w-full h-32"
+                  value={fMsg}
+                  onChange={(e) => setFMsg(e.target.value)}
+                  required
+                />
+
+                {feedback && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className={
+                      feedback.type === 'ok'
+                        ? 'text-green-700 bg-green-50 border border-green-200 rounded p-3'
+                        : 'text-red-700 bg-red-50 border border-red-200 rounded p-3'
+                    }
+                  >
+                    {feedback.text}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className={`bg-[#6D1B3B] text-white px-6 py-3 rounded transition hover:bg-[#8a2b52] ${
+                    sending ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {sending ? 'Odesílám…' : 'Odeslat'}
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </section>
 
