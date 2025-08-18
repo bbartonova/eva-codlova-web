@@ -1,11 +1,11 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
   "redirects": [
     {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.uctovcb.cz" }],
-      "destination": "https://uctovcb.cz/:path*",
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "uctovcb.cz" }],
+      "destination": "https://www.uctovcb.cz/$1",
       "permanent": true
     }
-  ]
+  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
