@@ -14,6 +14,9 @@ export default function Home() {
   const [feedback, setFeedback] = useState(null); // {type:'ok'|'err', text:string}
   const [submittedOk, setSubmittedOk] = useState(false);
 
+  // Honeypot – skrytý field proti botům
+  const [hp, setHp] = useState('');
+
   // Sticky menu + šipka nahoru
   useEffect(() => {
     const handleScroll = () => {
@@ -75,6 +78,12 @@ export default function Home() {
     e.preventDefault();
     setFeedback(null);
 
+    // Honeypot – když je vyplněný, děláme že úspěch a nic neposíláme
+    if (hp && hp.trim().length > 0) {
+      setSubmittedOk(true);
+      return;
+    }
+
     if (!fName.trim() || !fEmail.trim() || !fMsg.trim()) {
       setFeedback({ type: 'err', text: 'Vyplňte prosím všechna pole.' });
       return;
@@ -89,7 +98,12 @@ export default function Home() {
       const resp = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: fName, email: fEmail, message: fMsg }),
+        body: JSON.stringify({
+          name: fName,
+          email: fEmail,
+          message: fMsg,
+          hp, // pošleme i honeypot pro případnou kontrolu na backendu
+        }),
       });
 
       let data = null;
@@ -109,6 +123,7 @@ export default function Home() {
         setFName('');
         setFEmail('');
         setFMsg('');
+        setHp('');
         setSubmittedOk(true);
       } else if (isDev) {
         // Fallback pro lokální vývoj bez API route
@@ -119,6 +134,7 @@ export default function Home() {
         setFName('');
         setFEmail('');
         setFMsg('');
+        setHp('');
         setSubmittedOk(true);
       } else {
         throw new Error(data?.error || 'Chyba při odesílání.');
@@ -617,6 +633,38 @@ export default function Home() {
               </div>
             ) : (
               <form onSubmit={handleContactSubmit} className="grid gap-4">
+                {/* HONEYPOT (skrytý) */}
+                <label
+                  htmlFor="company"
+                  style={{
+                    position: 'absolute',
+                    left: '-5000px',
+                    width: '1px',
+                    height: '1px',
+                    overflow: 'hidden',
+                  }}
+                  aria-hidden="true"
+                >
+                  Company
+                </label>
+                <input
+                  id="company"
+                  type="text"
+                  name="company"
+                  value={hp}
+                  onChange={(e) => setHp(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  style={{
+                    position: 'absolute',
+                    left: '-5000px',
+                    width: '1px',
+                    height: '1px',
+                    overflow: 'hidden',
+                  }}
+                  aria-hidden="true"
+                />
+
                 <label className="text-sm text-gray-800">
                   Jméno <span className="text-red-600">*</span>
                 </label>
@@ -628,6 +676,7 @@ export default function Home() {
                   value={fName}
                   onChange={(e) => setFName(e.target.value)}
                   required
+                  autoComplete="name"
                 />
 
                 <label className="text-sm text-gray-800">
@@ -641,6 +690,8 @@ export default function Home() {
                   value={fEmail}
                   onChange={(e) => setFEmail(e.target.value)}
                   required
+                  autoComplete="email"
+                  inputMode="email"
                 />
 
                 <label className="text-sm text-gray-800">
@@ -653,6 +704,7 @@ export default function Home() {
                   value={fMsg}
                   onChange={(e) => setFMsg(e.target.value)}
                   required
+                  autoComplete="off"
                 />
 
                 {feedback && (
