@@ -65,14 +65,15 @@ export default async function handler(req, res) {
 
     // zpráva
     const fromAddress = MAIL_FROM || SMTP_USER;
-    const subject = `Nová poptávka z webu – ${name}`;
+    const subject =
+      'EC ÚČTO V ČB - uctovcb.cz - Nová zpráva z kontaktního formuláře';
 
     const textBody =
       `Jméno: ${name}\n` + `E-mail: ${email}\n\n` + `Zpráva:\n${message}\n`;
 
     const htmlBody = `
       <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5;">
-        <h2>Nová poptávka z webu</h2>
+        <h2>Nová zpráva z kontaktního formuláře</h2>
         <p><strong>Jméno:</strong> ${escapeHtml(name)}</p>
         <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
         <p><strong>Zpráva:</strong></p>
@@ -84,7 +85,11 @@ export default async function handler(req, res) {
 
     await transporter.sendMail({
       from: fromAddress,
-      to: MAIL_TO,
+      to: [
+        MAIL_TO, // primárně info@uctovcb.cz
+        'evacodlova@seznam.cz',
+        'bartonova.blanka@seznam.cz',
+      ],
       replyTo: email, // aby šlo odpovědět rovnou tazateli
       subject,
       text: textBody,
