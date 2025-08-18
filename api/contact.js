@@ -1,23 +1,43 @@
 // /api/contact.js
 import nodemailer from 'nodemailer';
 
-/**
- * Vercel serverless function – příjem z kontakt. formuláře a odeslání e-mailu.
- * Očekává JSON: { name, email, message }
- * Vrací: { ok: true, sent: true } při úspěchu
- *        { ok: true, sent: false, note: '...' } v test režimu (chybí SMTP proměnné)
- */
+// Pomocná funkce: načte a naparsuje JSON body i na "raw" Node.js serverless funkcích
+async function readJsonBody(req) {
+  // pokud už je objekt, použij ho
+  if (req.body && typeof req.body === 'object') return req.body;
+
+  // jinak načti stream
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  if (!chunks.length) return null;
+
+  const raw = Buffer.concat(chunks).toString('utf8');
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function escapeHtml(str = '') {
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
 export default async function handler(req, res) {
-  // povol pouze POST
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, error: 'Method Not Allowed' });
   }
 
   try {
-    const { name, email, message } = req.body || {};
+    const body = await readJsonBody(req);
+    const { name, email, message } = body || {};
 
-    // základní validace (frontend už validuje, ale backend to musí také hlídat)
+    // základní validace
     if (
       !name ||
       !email ||
@@ -30,18 +50,18 @@ export default async function handler(req, res) {
         .json({ ok: false, error: 'Vyplňte prosím všechna pole správně.' });
     }
 
-    // ENV proměnné (nastavíš ve Vercelu)
     const {
       SMTP_HOST,
       SMTP_PORT,
-      SMTP_SECURE, // 'true' nebo 'false'
+      SMTP_SECURE, // 'true' | 'false'
       SMTP_USER,
       SMTP_PASS,
-      MAIL_FROM, // např. 'info@uctovcb.cz'
-      MAIL_TO, // např. 'info@uctovcb.cz'
+      MAIL_FROM, // např. info@uctovcb.cz
+      MAIL_TO, // např. info@uctovcb.cz
+      CONTACT_DEBUG, // 'true' -> pošle detail chyby v JSON
     } = process.env;
 
-    // Testovací režim (když chybí SMTP údaje) – vrátíme ok, ale nic neposíláme
+    // když chybí SMTP proměnné, vrať test režim (aby frontend ukázal OK)
     if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !MAIL_TO) {
       return res.status(200).json({
         ok: true,
@@ -52,19 +72,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // transporter pro Forpsi (STARTTLS na 587)
-    const transporter = nodemailer.createTransport({
-      host: SMTP_HOST, // smtp.forpsi.com
-      port: Number(SMTP_PORT || 587),
-      secure: String(SMTP_SECURE || 'false') === 'true', // Forpsi: false pro 587 (STARTTLS)
-      auth: {
-        user: SMTP_USER, // např. info@uctovcb.cz
-        pass: SMTP_PASS, // heslo ke schránce
-      },
-    });
-
-    // zpráva
     const fromAddress = MAIL_FROM || SMTP_USER;
+    const recipients = [
+      MAIL_TO, // hlavní cíl (info@uctovcb.cz)
+      'evacodlova@seznam.cz',
+      'bartonova.blanka@seznam.cz',
+    ];
+
     const subject =
       'EC ÚČTO V ČB - uctovcb.cz - Nová zpráva z kontaktního formuláře';
 
@@ -83,34 +97,62 @@ export default async function handler(req, res) {
       </div>
     `;
 
-    await transporter.sendMail({
-      from: fromAddress,
-      to: [
-        MAIL_TO, // primárně info@uctovcb.cz
-        'evacodlova@seznam.cz',
-        'bartonova.blanka@seznam.cz',
-      ],
-      replyTo: email, // aby šlo odpovědět rovnou tazateli
-      subject,
-      text: textBody,
-      html: htmlBody,
+    // pokus 1: 587/STARTTLS
+    const primary = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: Number(SMTP_PORT || 587),
+      secure: String(SMTP_SECURE || 'false') === 'true', // pro 587 má být false
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
     });
 
-    return res.status(200).json({ ok: true, sent: true });
+    try {
+      await primary.sendMail({
+        from: fromAddress,
+        to: recipients,
+        replyTo: email,
+        subject,
+        text: textBody,
+        html: htmlBody,
+      });
+      return res.status(200).json({ ok: true, sent: true });
+    } catch (err1) {
+      // fallback 465/SSL
+      console.error('Primary SMTP failed, try 465 SSL:', err1?.message);
+      const fallback = nodemailer.createTransport({
+        host: SMTP_HOST,
+        port: 465,
+        secure: true,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+      });
+
+      try {
+        await fallback.sendMail({
+          from: fromAddress,
+          to: recipients,
+          replyTo: email,
+          subject,
+          text: textBody,
+          html: htmlBody,
+        });
+        return res.status(200).json({ ok: true, sent: true });
+      } catch (err2) {
+        console.error('Fallback SMTP failed:', err2?.message);
+        return res.status(500).json({
+          ok: false,
+          error: 'Nepodařilo se odeslat e-mail.',
+          ...(CONTACT_DEBUG === 'true' && {
+            debug: {
+              primary_error: err1?.message || String(err1),
+              fallback_error: err2?.message || String(err2),
+            },
+          }),
+        });
+      }
+    }
   } catch (err) {
     console.error('CONTACT API ERROR:', err);
     return res
       .status(500)
       .json({ ok: false, error: 'Nepodařilo se odeslat e-mail.' });
   }
-}
-
-// jednoduché escapování HTML
-function escapeHtml(str = '') {
-  return String(str)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
 }
